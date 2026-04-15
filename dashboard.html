@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CapCup - My Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e1b4b);
+      min-height: 100vh;
+      padding: 20px;
+      color: white;
+    }
+    .container { max-width: 500px; margin: 0 auto; }
+    
+    #loginScreen { 
+      background: rgba(255,255,255,0.05);
+      padding: 30px;
+      border-radius: 20px;
+    }
+    
+    #dashboardScreen { display: none; }
+    
+    .card {
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      border-radius: 24px;
+      padding: 30px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .chip {
+      width: 50px;
+      height: 40px;
+      background: linear-gradient(135deg, #ffd700, #b8860b);
+      border-radius: 8px;
+      margin-bottom: 25px;
+    }
+    
+    .card-number {
+      font-size: 26px;
+      letter-spacing: 4px;
+      margin: 20px 0;
+    }
+    
+    .expiry {
+      display: flex;
+      justify-content: space-between;
+      opacity: 0.8;
+      margin-bottom: 20px;
+    }
+    
+    .credits-box {
+      background: #22c55e;
+      padding: 12px 20px;
+      border-radius: 50px;
+      display: inline-block;
+      font-weight: bold;
+      font-size: 20px;
+    }
+    
+    .credits-box.expired {
+      background: #ef4444;
+    }
+    
+    input, button {
+      width: 100%;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 12px;
+      border: none;
+      font-size: 16px;
+    }
+    
+    button {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    .action-btn {
+      background: rgba(255,255,255,0.1);
+      margin: 5px 0;
+    }
+    
+    .action-btn.help {
+      background: #3b82f6;
+    }
+    
+    .logout {
+      background: rgba(239,68,68,0.3);
+      color: #ef4444;
+      margin-top: 20px;
+    }
+    
+    .message {
+      padding: 15px;
+      border-radius: 12px;
+      margin: 15px 0;
+      display: none;
+    }
+    
+    .success { background: rgba(34,197,94,0.3); display: block; }
+    .error { background: rgba(239,68,68,0.3); display: block; }
+    
+    .hidden-form {
+      background: rgba(255,255,255,0.05);
+      padding: 20px;
+      border-radius: 16px;
+      margin-top: 15px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- Login Screen -->
+    <div id="loginScreen">
+      <h2 style="text-align:center; margin-bottom:30px;">Login to CapCup</h2>
+      <div id="loginMessage" class="message"></div>
+      <input type="tel" id="loginPhone" placeholder="Phone Number">
+      <input type="password" id="loginPassword" placeholder="Password">
+      <button onclick="doLogin()">Login</button>
+      <p style="text-align:center; margin-top:20px;">
+        <a href="index.html" style="color:#60a5fa;">← Back to Registration</a>
+      </p>
+    </div>
+    
+    <!-- Dashboard Screen -->
+    <div id="dashboardScreen">
+      <div class="card">
+        <div class="chip"></div>
+        <div class="card-number" id="displayCardNumber">CAP-XXXXXXXX</div>
+        <div class="expiry">
+          <span>VALID THRU <span id="displayExpiry">--/--</span></span>
+          <span id="displayStatus">● ACTIVE</span>
+        </div>
+        <div class="credits-box" id="creditsDisplay">
+          💎 <span id="creditAmount">0</span> Credits
+        </div>
+      </div>
+      
+      <div id="actionMessage" class="message"></div>
+      
+      <button class="action-btn help" onclick="getOnlineHelp()">
+        🎓 Get Online Help (1 Credit)
+      </button>
+      
+      <button class="action-btn" onclick="toggleTaskForm()">
+        📸 Submit Task for Credits
+      </button>
+      
+      <div id="taskForm" class="hidden-form">
+        <h4>Submit a Task</h4>
+        <select id="taskType" style="width:100%; padding:12px; border-radius:8px; margin:10px 0;">
+          <option value="share_fb">Share on Facebook (+5 Credits)</option>
+          <option value="review">Write a Review (+5 Credits)</option>
+          <option value="refer">Refer a Friend (+10 Credits)</option>
+        </select>
+        <input type="file" id="taskImage" accept="image/*">
+        <button onclick="submitTask()">Upload Screenshot</button>
+        <button onclick="toggleTaskForm()" style="background:#64748b;">Cancel</button>
+      </div>
+      
+      <button class="action-btn" onclick="toggleRechargeForm()">
+        💳 Pay Monthly 10 Taka
+      </button>
+      
+      <div id="rechargeForm" class="hidden-form">
+        <h4>Monthly Recharge</h4>
+        <p>Send <strong>10 Taka</strong> to:</p>
+        <p style="font-size:20px; background:#000; padding:10px; border-radius:8px; margin:10px 0;">bKash: 01XXXXXXXXX</p>
+        <input type="text" id="rechargeTrxId" placeholder="Enter bKash TrxID">
+        <button onclick="submitRecharge()">Submit for Verification</button>
+        <button onclick="toggleRechargeForm()" style="background:#64748b;">Cancel</button>
+      </div>
+      
+      <button class="logout" onclick="logout()">Logout</button>
+    </div>
+  </div>
+  
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxbpjpkF5C1FadjXYLtVVz64YNDY2_zf2u1A5dCc-dLTgCLiIlkbbUXfpsvXkLiqHEV/exec';
+    const IMGBB_KEY = '65d48bd0c652eafd3aa6ef54949e7e44';
+    
+    let currentUser = null;
+    
+    // Check if already logged in
+    const savedUser = localStorage.getItem('capcup_user');
+    if (savedUser) {
+      currentUser = JSON.parse(savedUser);
+      showDashboard();
+      loadUserData();
+    }
+    
+    async function doLogin() {
+      const phone = document.getElementById('loginPhone').value;
+      const password = document.getElementById('loginPassword').value;
+      
+      if (!phone || !password) {
+        showMessage('loginMessage', 'Please enter phone and password', 'error');
+        return;
+      }
+      
+      const params = new URLSearchParams({
+        action: 'login',
+        phone: phone,
+        password: password
+      });
+      
+      try {
+        const response = await fetch(API_URL + '?' + params);
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+          currentUser = data.user;
+          currentUser.password = password;
+          localStorage.setItem('capcup_user', JSON.stringify(currentUser));
+          showDashboard();
+          loadUserData();
+        } else {
+          showMessage('loginMessage', data.message, 'error');
+        }
+      } catch (error) {
+        showMessage('loginMessage', 'Connection error', 'error');
+      }
+    }
+    
+    function showDashboard() {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboardScreen').style.display = 'block';
+    }
+    
+    async function loadUserData() {
+      const params = new URLSearchParams({
+        action: 'get_card_data',
+        phone: currentUser.phone,
+        password: currentUser.password
+      });
+      
+      try {
+        const response = await fetch(API_URL + '?' + params);
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+          currentUser = data.user;
+          currentUser.password = currentUser.password;
+          
+          document.getElementById('displayCardNumber').textContent = data.user.card_number;
+          document.getElementById('creditAmount').textContent = data.user.credits;
+          
+          const expiry = new Date(data.user.expiry);
+          document.getElementById('displayExpiry').textContent = 
+            (expiry.getMonth()+1) + '/' + expiry.getFullYear().toString().slice(-2);
+          
+          const statusEl = document.getElementById('displayStatus');
+          const creditsBox = document.getElementById('creditsDisplay');
+          
+          if (data.user.card_status === 'Active') {
+            statusEl.innerHTML = '● ACTIVE';
+            statusEl.style.color = '#22c55e';
+            creditsBox.classList.remove('expired');
+          } else {
+            statusEl.innerHTML = '● EXPIRED';
+            statusEl.style.color = '#ef4444';
+            creditsBox.classList.add('expired');
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    
+    async function getOnlineHelp() {
+      const params = new URLSearchParams({
+        action: 'use_credit',
+        phone: currentUser.phone,
+        password: currentUser.password
+      });
+      
+      const response = await fetch(API_URL + '?' + params);
+      const data = await response.json();
+      
+      if (data.status === 'success') {
+        showMessage('actionMessage', '✅ Help request sent! You will be contacted soon. Credits: ' + data.credits_remaining, 'success');
+        loadUserData();
+      } else {
+        showMessage('actionMessage', '❌ ' + data.message, 'error');
+      }
+    }
+    
+    function toggleTaskForm() {
+      const form = document.getElementById('taskForm');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+    
+    async function submitTask() {
+      const fileInput = document.getElementById('taskImage');
+      const file = fileInput.files[0];
+      
+      if (!file) {
+        alert('Please select a screenshot');
+        return;
+      }
+      
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      showMessage('actionMessage', 'Uploading image...', 'success');
+      
+      try {
+        const uploadRes = await fetch('https://api.imgbb.com/1/upload?key=' + IMGBB_KEY, {
+          method: 'POST',
+          body: formData
+        });
+        
+        const uploadData = await uploadRes.json();
+        
+        if (uploadData.success) {
+          const taskType = document.getElementById('taskType').value;
+          
+          const params = new URLSearchParams({
+            action: 'submit_task',
+            phone: currentUser.phone,
+            task_type: taskType,
+            image_url: uploadData.data.url
+          });
+          
+          const response = await fetch(API_URL + '?' + params);
+          const data = await response.json();
+          
+          if (data.status === 'success') {
+            showMessage('actionMessage', '✅ Task submitted! Wait for approval.', 'success');
+            toggleTaskForm();
+            document.getElementById('taskImage').value = '';
+          }
+        }
+      } catch (error) {
+        showMessage('actionMessage', 'Upload failed. Try again.', 'error');
+      }
+    }
+    
+    function toggleRechargeForm() {
+      const form = document.getElementById('rechargeForm');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+    
+    async function submitRecharge() {
+      const trxId = document.getElementById('rechargeTrxId').value;
+      
+      if (!trxId) {
+        alert('Please enter TrxID');
+        return;
+      }
+      
+      const params = new URLSearchParams({
+        action: 'recharge',
+        phone: currentUser.phone,
+        trx_id: trxId
+      });
+      
+      const response = await fetch(API_URL + '?' + params);
+      const data = await response.json();
+      
+      if (data.status === 'success') {
+        showMessage('actionMessage', '✅ Recharge submitted! Wait for verification.', 'success');
+        toggleRechargeForm();
+      } else {
+        showMessage('actionMessage', '❌ ' + data.message, 'error');
+      }
+    }
+    
+    function showMessage(elementId, text, type) {
+      const el = document.getElementById(elementId);
+      el.textContent = text;
+      el.className = 'message ' + type;
+      setTimeout(() => el.className = 'message', 5000);
+    }
+    
+    function logout() {
+      localStorage.removeItem('capcup_user');
+      location.reload();
+    }
+  </script>
+</body>
+  </html>
