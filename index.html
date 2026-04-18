@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>CapCup · Premium Virtual Card Membership</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f8fafc 0%, #ffffff 100%);
+      min-height: 100vh;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* Navigation */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 0;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid rgba(30, 58, 95, 0.08);
+    }
+
+    .logo {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #1e3a5f, #3b82f6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .nav-btn {
+      background: white;
+      border: 1.5px solid #e2e8f0;
+      padding: 0.7rem 1.8rem;
+      border-radius: 40px;
+      font-weight: 600;
+      color: #1e3a5f;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+      font-size: 0.95rem;
+    }
+
+    .nav-btn:hover {
+      background: #1e3a5f;
+      color: white;
+      border-color: #1e3a5f;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(30, 58, 95, 0.15);
+    }
+
+    .nav-btn i {
+      margin-right: 6px;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 32px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      animation: slideUp 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-header h2 {
+      color: #1e3a5f;
+      font-weight: 700;
+      font-size: 1.8rem;
+    }
+
+    .close-modal {
+      font-size: 28px;
+      font-weight: 300;
+      cursor: pointer;
+      color: #94a3b8;
+      transition: color 0.2s;
+    }
+
+    .close-modal:hover {
+      color: #1e3a5f;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Sections */
+    .landing-section, .dashboard-section {
+      transition: all 0.3s ease;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Hero Grid */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      margin: 2rem 0 4rem;
+    }
+
+    .hero-content h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.2;
+      color: #0f172a;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-content h1 span {
+      background: linear-gradient(145deg, #1e3a5f, #3b82f6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-content p {
+      font-size: 1.1rem;
+      color: #475569;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    /* Card Preview Wrapper */
+    .card-preview-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 380px;
+    }
+
+    /* Glowing Orbs */
+    .orb {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.4;
+      z-index: 0;
+      animation: orbFloat 8s infinite alternate ease-in-out;
+    }
+
+    .orb-blue {
+      background: #3b82f6;
+      top: -30px;
+      left: -40px;
+    }
+
+    .orb-purple {
+      background: #a855f7;
+      bottom: -30px;
+      right: -30px;
+      animation-delay: 2s;
+    }
+
+    .orb-pink {
+      background: #ec4899;
+      top: 40%;
+      left: 60%;
+      animation-delay: 4s;
+    }
+
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+      100% { transform: translate(40px, -30px) scale(1.15); opacity: 0.5; }
+    }
+
+    /* Premium Card - 4D Animated */
+    .premium-card {
+      position: relative;
+      z-index: 5;
+      width: 420px;
+      max-width: 100%;
+      background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+      backdrop-filter: blur(10px);
+      border-radius: 28px;
+      padding: 2rem 1.8rem;
+      box-shadow: 0 30px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 215, 0, 0.15) inset;
+      color: white;
+      animation: floatCard 6s infinite alternate ease-in-out;
+      transform-style: preserve-3d;
+      transition: box-shadow 0.3s;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .premium-card.expired-glow {
+      box-shadow: 0 0 40px #ef4444, 0 30px 50px -12px #00000080, 0 0 0 1px #ef4444 inset;
+      animation: floatCard 6s infinite alternate ease-in-out, redPulse 2s infinite;
+    }
+
+    @keyframes redPulse {
+      0%, 100% { box-shadow: 0 0 30px #ef4444, 0 30px 50px -12px #00000080; }
+      50% { box-shadow: 0 0 50px #ef4444, 0 30px 50px -12px #00000080; }
+    }
+
+    @keyframes floatCard {
+      0% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(-15px) rotate(2deg); }
+    }
+
+    /* Holographic sweep */
+    .premium-card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(115deg, transparent 0%, rgba(255, 255, 255, 0.2) 30%, transparent 60%);
+      transform: skewX(-20deg);
+      animation: holographic 6s infinite linear;
+      pointer-events: none;
+      border-radius: 28px;
+    }
+
+    @keyframes holographic {
+      0% { left: -150%; }
+      100% { left: 50%; }
+    }
+
+    /* Shimmer pulse */
+    .premium-card .shimmer {
+      position: absolute;
+      inset: 0;
+      border-radius: 28px;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.25), transparent 70%);
+      opacity: 0.4;
+      animation: shimmerPulse 3s infinite alternate;
+      pointer-events: none;
+    }
+
+    @keyframes shimmerPulse {
+      0% { opacity: 0.2; }
+      100% { opacity: 0.6; }
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .brand-name {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #3b82f6, #a855f7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .infinity-badge {
+      background: #fbbf24;
+      color: #0f172a;
+      font-weight: 800;
+      padding: 0.3rem 1rem;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      box-shadow: 0 0 20px #fbbf24;
+      animation: badgeGlow 2s infinite alternate;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    @keyframes badgeGlow {
+      0% { box-shadow: 0 0 10px #fbbf24, 0 0 5px #f59e0b; }
+      100% { box-shadow: 0 0 25px #fbbf24, 0 0 15px #f59e0b; }
+    }
+
+    .chip-area {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 1.5rem 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    .gold-chip {
+      width: 55px;
+      height: 42px;
+      background: linear-gradient(145deg, #fbbf24, #b45309);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), inset 0 1px 3px rgba(255, 255, 255, 0.6);
+      transform: perspective(400px) rotateY(-8deg);
+    }
+
+    .card-number {
+      font-size: 1.8rem;
+      letter-spacing: 4px;
+      font-weight: 500;
+      margin: 0.8rem 0 1.5rem;
+      word-spacing: 10px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .cardholder-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: 0.5rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .cardholder-label {
+      font-size: 0.75rem;
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .cardholder-name {
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+
+    .due-date-small {
+      font-size: 0.85rem;
+      opacity: 0.85;
+      margin-top: 5px;
+    }
+
+    /* Registration Card */
+    .reg-card {
+      background: white;
+      border-radius: 32px;
+      padding: 2.5rem;
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
+      border: 1px solid #eef2f6;
+    }
+
+    .reg-card h2 {
+      color: #1e3a5f;
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+    }
+
+    .input-group {
+      margin-bottom: 1.3rem;
+    }
+
+    .input-group label {
+      font-weight: 600;
+      color: #1e293b;
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 0.9rem 1.2rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      font-size: 1rem;
+      transition: all 0.2s;
+      background: #fafcff;
+    }
+
+    .input-field:focus {
+      border-color: #3b82f6;
+      outline: none;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    .nagad-box {
+      background: linear-gradient(135deg, #f1f5f9, #ffffff);
+      padding: 1.2rem;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 20px 0;
+      border: 1.5px solid #e2e8f0;
+    }
+
+    .nagad-box i {
+      font-size: 1.8rem;
+      color: #1e3a5f;
+    }
+
+    .nagad-number {
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: #1e3a5f;
+      letter-spacing: 0.5px;
+    }
+
+    .price-tag {
+      display: inline-block;
+      font-weight: 700;
+      color: #1e3a5f;
+      background: linear-gradient(135deg, #dbeafe, #eff6ff);
+      padding: 8px 18px;
+      border-radius: 40px;
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #1e3a5f, #2d5a8e);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      width: 100%;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 8px 20px rgba(30, 58, 95, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #0f2a44, #1e3a5f);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(30, 58, 95, 0.3);
+    }
+
+    .btn-primary i {
+      margin-right: 8px;
+    }
+
+    /* Dashboard Styles */
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .dashboard-header h2 {
+      color: #1e3a5f;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .logout-btn {
+      background: white;
+      border: 1.5px solid #e2e8f0;
+      padding: 0.7rem 1.8rem;
+      border-radius: 40px;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 3rem;
+    }
+
+    .status-section {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.05);
+      border: 1px solid #eef2f6;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .badge-active {
+      background: #10b98120;
+      color: #10b981;
+      border: 1.5px solid #10b98140;
+    }
+
+    .badge-expired {
+      background: #ef444420;
+      color: #ef4444;
+      border: 1.5px solid #ef444440;
+    }
+
+    .badge-pending {
+      background: #f59e0b20;
+      color: #f59e0b;
+      border: 1.5px solid #f59e0b40;
+    }
+
+    .notice-box {
+      padding: 1.2rem;
+      border-radius: 18px;
+      margin: 1.5rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .notice-box i {
+      font-size: 1.3rem;
+      margin-top: 2px;
+    }
+
+    .notice-warning {
+      background: #fef3c7;
+      color: #92400e;
+      border-left: 6px solid #f59e0b;
+    }
+
+    .notice-info {
+      background: #dbeafe;
+      color: #1e40af;
+      border-left: 6px solid #3b82f6;
+    }
+
+    .action-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .action-item {
+      background: linear-gradient(135deg, #f8fafc, #ffffff);
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: 0 5px 15px #eef2f6;
+      border: 1.5px solid #eef2f6;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .action-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 25px rgba(30, 58, 95, 0.1);
+      border-color: #3b82f6;
+    }
+
+    .action-item.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+      filter: grayscale(0.6);
+    }
+
+    .action-item i {
+      font-size: 1.8rem;
+      color: #1e3a5f;
+      margin-bottom: 1rem;
+    }
+
+    .action-item h3 {
+      color: #1e3a5f;
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+    }
+
+    .action-item p {
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    .payment-form-modal {
+      background: #f8fafc;
+      padding: 2rem;
+      border-radius: 24px;
+      margin-top: 2rem;
+      border: 1.5px solid #e2e8f0;
+    }
+
+    .payment-form-modal h4 {
+      color: #1e3a5f;
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1.5px solid #cbd5e1;
+      padding: 0.7rem 1.5rem;
+      border-radius: 30px;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      margin-top: 0.8rem;
+      width: 100%;
+    }
+
+    .admin-link {
+      margin-top: 4rem;
+      text-align: center;
+      padding: 2rem 0;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .admin-link a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .admin-link a:hover {
+      color: #1e3a5f;
+    }
+
+    /* Responsive */
+    @media (max-width: 968px) {
+      .hero-grid, .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      
+      .hero-content h1 {
+        font-size: 2.8rem;
+      }
+      
+      .container {
+        padding: 0 1.5rem;
+      }
+      
+      .action-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .premium-card {
+        width: 100%;
+        padding: 1.5rem;
+      }
+      
+      .card-number {
+        font-size: 1.4rem;
+      }
+      
+      .navbar {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+
+    /* Loading state */
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .error-message {
+      color: #ef4444;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="logo">
+        <i class="fas fa-crown" style="font-size: 1.8rem; margin-right: 8px; background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; background-clip: text; color: transparent;"></i>
+        CapCup
+      </div>
+      <div class="nav-links">
+        <button class="nav-btn" id="loginBtn">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+      </div>
+    </nav>
+
+    <!-- Landing Section -->
+    <div id="landingSection" class="landing-section">
+      <div class="hero-grid">
+        <div class="hero-content">
+          <h1>Experience the <span>Future</span> of Digital Cards</h1>
+          <p>Get your premium virtual membership card with exclusive benefits, 4D animations, and priority support.</p>
+          
+          <div class="card-preview-wrapper">
+            <div class="orb orb-blue"></div>
+            <div class="orb orb-purple"></div>
+            <div class="orb orb-pink"></div>
+            
+            <div class="premium-card" id="previewCard">
+              <div class="shimmer"></div>
+              <div class="card-header">
+                <span class="brand-name">CapCup</span>
+                <span class="infinity-badge"><i class="fas fa-infinity"></i> INFINITY</span>
+              </div>
+              <div class="chip-area">
+                <div class="gold-chip"></div>
+              </div>
+              <div class="card-number">6677 •••• ••••</div>
+              <div class="cardholder-row">
+                <div>
+                  <div class="cardholder-label">Cardholder</div>
+                  <div class="cardholder-name">Premium Member</div>
+                  <div class="due-date-small">Due: Upon Activation</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <div class="reg-card">
+            <h2><i class="fas fa-credit-card" style="margin-right: 10px; color: #3b82f6;"></i>Join CapCup</h2>
+            
+            <div class="input-group">
+              <label><i class="fas fa-user"></i> Full Name</label>
+              <input type="text" id="regName" class="input-field" placeholder="Enter your full name">
+            </div>
+            
+            <div class="input-group">
+              <label><i class="fas fa-envelope"></i> Email Address</label>
+              <input type="email" id="regEmail" class="input-field" placeholder="you@example.com">
+            </div>
+            
+            <div class="input-group">
+              <label><i class="fas fa-lock"></i> Password</label>
+              <input type="password" id="regPassword" class="input-field" placeholder="Create a strong password">
+            </div>
+            
+            <div class="nagad-box">
+              <i class="fas fa-mobile-alt"></i>
+              <div>
+                <div style="font-size: 0.9rem; opacity: 0.8;">Nagad Payment</div>
+                <span class="nagad-number">01715783544</span>
+              </div>
+            </div>
+            
+            <div class="price-tag">
+              <i class="fas fa-tag"></i> ৳150 One-time + ৳50 Monthly
+            </div>
+            
+            <div class="input-group">
+              <label><i class="fas fa-receipt"></i> Nagad Transaction ID</label>
+              <input type="text" id="regTrxId" class="input-field" placeholder="e.g., TRX123456789">
+            </div>
+            
+            <button class="btn-primary" id="registerBtn">
+              <i class="fas fa-check-circle"></i> Register & Pay ৳150
+            </button>
+            
+            <p style="font-size: 0.85rem; margin-top: 1rem; color: #64748b; text-align: center;">
+              <i class="fas fa-info-circle"></i> Registration requires admin approval within 24 hours
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboardSection" class="dashboard-section hidden">
+      <div class="dashboard-header">
+        <h2><i class="fas fa-id-card" style="margin-right: 12px; color: #3b82f6;"></i>My Membership</h2>
+        <button class="logout-btn" id="logoutDashboardBtn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+      
+      <div class="dashboard-grid">
+        <div class="card-preview-wrapper">
+          <div class="orb orb-blue"></div>
+          <div class="orb orb-purple"></div>
+          <div class="orb orb-pink"></div>
+          
+          <div class="premium-card" id="userCard">
+            <div class="shimmer"></div>
+            <div class="card-header">
+              <span class="brand-name">CapCup</span>
+              <span class="infinity-badge"><i class="fas fa-infinity"></i> INFINITY</span>
+            </div>
+            <div class="chip-area">
+              <div class="gold-chip"></div>
+            </div>
+            <div class="card-number" id="displayCardNumber">6677 •••• ••••</div>
+            <div class="cardholder-row">
+              <div>
+                <div class="cardholder-label">Cardholder</div>
+                <div class="cardholder-name" id="displayCardholder">---</div>
+                <div class="due-date-small" id="displayDueDate">Due: ---</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="status-section">
+          <span class="status-badge" id="statusBadge">Pending</span>
+          
+          <div id="expiredNotice" class="notice-box notice-warning hidden">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div><strong>Membership Expired</strong><br>Your card has expired. Please pay the monthly fee to reactivate.</div>
+          </div>
+          
+          <div id="pendingNotice" class="notice-box notice-info hidden">
+            <i class="fas fa-clock"></i>
+            <div><strong>Payment Pending</strong><br>Your registration payment is being verified. Card will activate upon approval.</div>
+          </div>
+          
+          <div id="monthlyPendingNotice" class="notice-box notice-info hidden">
+            <i class="fas fa-hourglass-half"></i>
+            <div><strong>Monthly Payment Pending</strong><br>Your monthly payment is awaiting admin approval.</div>
+          </div>
+          
+          <div class="action-cards">
+            <div class="action-item" id="techHelpCard">
+              <i class="fas fa-headset"></i>
+              <h3>Premium Technical Help</h3>
+              <p>Priority email support for active members</p>
+            </div>
+            
+            <div class="action-item" id="payMonthlyCard">
+              <i class="fas fa-money-bill-wave"></i>
+              <h3>Pay Monthly Fee</h3>
+              <p>Extend membership by 30 days for ৳50</p>
+            </div>
+          </div>
+          
+          <!-- Monthly Payment Form -->
+          <div id="monthlyPaymentForm" class="payment-form-modal hidden">
+            <h4><i class="fas fa-credit-card"></i> Pay Monthly Subscription</h4>
+            <p style="margin-bottom: 1.5rem; color: #475569;">
+              Send <strong>৳50</strong> to Nagad: <strong style="color: #1e3a5f;">01715783544</strong>
+            </p>
+            
+            <div class="input-group">
+              <label>Nagad Transaction ID</label>
+              <input type="text" id="monthlyTrxId" class="input-field" placeholder="Enter TrxID">
+            </div>
+            
+            <div class="input-group">
+              <label>Confirm Password</label>
+              <input type="password" id="confirmPassword" class="input-field" placeholder="Enter your password">
+            </div>
+            
+            <button class="btn-primary" id="submitMonthlyPayment" style="padding: 0.9rem;">
+              <i class="fas fa-paper-plane"></i> Submit Payment
+            </button>
+            <button class="btn-secondary" id="cancelPaymentForm">
+              <i class="fas fa-times"></i> Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Link -->
+    <div class="admin-link">
+      <a href="admin.html"><i class="fas fa-shield-alt"></i> Admin Panel</a>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
+        <span class="close-modal" id="closeLoginModal">&times;</span>
+      </div>
+      
+      <div class="input-group">
+        <label><i class="fas fa-envelope"></i> Email</label>
+        <input type="email" id="loginEmail" class="input-field" placeholder="Enter your email">
+      </div>
+      
+      <div class="input-group">
+        <label><i class="fas fa-lock"></i> Password</label>
+        <input type="password" id="loginPassword" class="input-field" placeholder="Enter your password">
+      </div>
+      
+      <button class="btn-primary" id="loginSubmitBtn">
+        <i class="fas fa-sign-in-alt"></i> Login to Dashboard
+      </button>
+      
+      <p style="margin-top: 1rem; text-align: center; font-size: 0.9rem; color: #64748b;">
+        Don't have an account? <a href="#" id="switchToRegister" style="color: #3b82f6; text-decoration: none; font-weight: 600;">Register here</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // Configuration
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYOUR_SCRIPT_ID_HERE/exec'; // Replace with your Apps Script URL
+    const ADMIN_EMAIL = 'tartil.bdlink@gmail.com';
+    
+    // State
+    let currentUser = null;
+
+    // DOM Elements
+    const landingSection = document.getElementById('landingSection');
+    const dashboardSection = document.getElementById('dashboardSection');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginModal = document.getElementById('loginModal');
+    const closeLoginModal = document.getElementById('closeLoginModal');
+    const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+    const switchToRegister = document.getElementById('switchToRegister');
+    
+    // API Helper
+    async function callApi(action, params = {}) {
+      try {
+        const formData = new FormData();
+        formData.append('action', action);
+        Object.keys(params).forEach(key => formData.append(key, params[key]));
+        
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: formData
+        });
+        
+        return await response.json();
+      } catch (error) {
+        console.error('API Error:', error);
+        return { success: false, message: 'Network error. Please try again.' };
+      }
+    }
+
+    // Login Function
+    async function performLogin(email, password) {
+      const btn = loginSubmitBtn;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+      btn.disabled = true;
+      
+      const resp = await callApi('login', { email, password });
+      
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+      
+      if (resp.success) {
+        currentUser = resp.user;
+        sessionStorage.setItem('capcup_user', JSON.stringify(currentUser));
+        loginModal.classList.remove('active');
+        showDashboard();
+      } else {
+        alert(resp.message || 'Login failed. Please check your credentials.');
+      }
+    }
+
+    // Show Dashboard
+    async function showDashboard() {
+      if (!currentUser) {
+        const saved = sessionStorage.getItem('capcup_user');
+        if (saved) {
+          currentUser = JSON.parse(saved);
+          // Refresh user data
+          const resp = await callApi('getUser', { 
+            email: currentUser.email, 
+            password: currentUser.password || '' 
+          });
+          if (resp.success) currentUser = resp.user;
+        } else {
+          return;
+        }
+      }
+      
+      landingSection.classList.add('hidden');
+      dashboardSection.classList.remove('hidden');
+      loginBtn.innerHTML = '<i class="fas fa-user"></i> Dashboard';
+      
+      await updateDashboardUI();
+    }
+
+    // Show Landing
+    function showLanding() {
+      landingSection.classList.remove('hidden');
+      dashboardSection.classList.add('hidden');
+      loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+      currentUser = null;
+      sessionStorage.removeItem('capcup_user');
+    }
+
+    // Update Dashboard UI
+    async function updateDashboardUI() {
+      if (!currentUser) return;
+      
+      const user = currentUser;
+      
+      // Update card display
+      document.getElementById('displayCardholder').textContent = user.name || 'Member';
+      document.getElementById('displayCardNumber').textContent = user.cardNumber || '6677 •••• ••••';
+      
+      const dueDate = user.dueDate ? new Date(user.dueDate) : null;
+      const dueStr = dueDate ? dueDate.toLocaleDateString('en-GB') : 'Not set';
+      document.getElementById('displayDueDate').textContent = `Due: ${dueStr}`;
+      
+      // Status badge
+      const badge = document.getElementById('statusBadge');
+      const expiredNotice = document.getElementById('expiredNotice');
+      const pendingNotice = document.getElementById('pendingNotice');
+      const monthlyPendingNotice = document.getElementById('monthlyPendingNotice');
+      const cardEl = document.getElementById('userCard');
+      
+      let statusText = 'Pending';
+      let badgeClass = 'badge-pending';
+      let isExpired = false;
+      
+      if (user.signupApproved) {
+        if (dueDate && dueDate < new Date()) {
+          isExpired = true;
+          statusText = 'Expired';
+          badgeClass = 'badge-expired';
+        } else {
+          statusText = 'Active';
+          badgeClass = 'badge-active';
+        }
+      }
+      
+      badge.textContent = statusText;
+      badge.className = `status-badge ${badgeClass}`;
+      
+      // Show/hide notices
+      expiredNotice.classList.toggle('hidden', !isExpired);
+      pendingNotice.classList.toggle('hidden', user.signupApproved);
+      monthlyPendingNotice.classList.toggle('hidden', user.currentMonthPaid !== false || !user.signupApproved);
+      
+      // Expired glow
+      if (isExpired) {
+        cardEl.classList.add('expired-glow');
+      } else {
+        cardEl.classList.remove('expired-glow');
+      }
+      
+      // Tech help card state
+      const techCard = document.getElementById('techHelpCard');
+      if (isExpired || !user.signupApproved) {
+        techCard.classList.add('disabled');
+      } else {
+        techCard.classList.remove('disabled');
+      }
+    }
+
+    // Event Listeners
+    loginBtn.addEventListener('click', () => {
+      if (currentUser) {
+        showDashboard();
+      } else {
+        loginModal.classList.add('active');
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPassword').value = '';
+      }
+    });
+
+    closeLoginModal.addEventListener('click', () => {
+      loginModal.classList.remove('active');
+    });
+
+    loginModal.addEventListener('click', (e) => {
+      if (e.target === loginModal) {
+        loginModal.classList.remove('active');
+      }
+    });
+
+    switchToRegister.addEventListener('click', (e) => {
+      e.preventDefault();
+      loginModal.classList.remove('active');
+      showLanding();
+    });
+
+    loginSubmitBtn.addEventListener('click', () => {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      
+      if (!email || !password) {
+        alert('Please enter email and password');
+        return;
+      }
+      
+      performLogin(email, password);
+    });
+
+    // Registration
+    document.getElementById('registerBtn').addEventListener('click', async () => {
+      const name = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const trxId = document.getElementById('regTrxId').value.trim();
+      
+      if (!name || !email || !password || !trxId) {
+        alert('All fields are required');
+        return;
+      }
+      
+      if (password.length < 6) {
+        alert('Password must be at least 6 characters');
+        return;
+      }
+      
+      const btn = document.getElementById('registerBtn');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+      btn.disabled = true;
+      
+      const resp = await callApi('register', { name, email, password, trxId });
+      
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+      
+      if (resp.success) {
+        alert('Registration submitted! Please wait for admin approval (usually within 24 hours).');
+        document.getElementById('regName').value = '';
+        document.getElementById('regEmail').value = '';
+        document.getElementById('regPassword').value = '';
+        document.getElementById('regTrxId').value = '';
+      } else {
+        alert(resp.message || 'Registration failed. Please try again.');
+      }
+    });
+
+    // Logout
+    document.getElementById('logoutDashboardBtn').addEventListener('click', () => {
+      if (confirm('Are you sure you want to logout?')) {
+        showLanding();
+      }
+    });
+
+    // Tech Help
+    document.getElementById('techHelpCard').addEventListener('click', () => {
+      if (!currentUser || document.getElementById('techHelpCard').classList.contains('disabled')) {
+        alert('Premium Technical Help is only available for active members.');
+        return;
+      }
+      window.open(`mailto:${ADMIN_EMAIL}?subject=Premium Technical Help - ${currentUser.name} (${currentUser.email})`, '_blank');
+    });
+
+    // Monthly Payment Toggle
+    const payCard = document.getElementById('payMonthlyCard');
+    const paymentForm = document.getElementById('monthlyPaymentForm');
+    
+    payCard.addEventListener('click', () => {
+      paymentForm.classList.remove('hidden');
+    });
+
+    document.getElementById('cancelPaymentForm').addEventListener('click', () => {
+      paymentForm.classList.add('hidden');
+      document.getElementById('monthlyTrxId').value = '';
+      document.getElementById('confirmPassword').value = '';
+    });
+
+    // Submit Monthly Payment
+    document.getElementById('submitMonthlyPayment').addEventListener('click', async () => {
+      if (!currentUser) return;
+      
+      const trxId = document.getElementById('monthlyTrxId').value.trim();
+      const password = document.getElementById('confirmPassword').value;
+      
+      if (!trxId || !password) {
+        alert('Please enter Transaction ID and password');
+        return;
+      }
+      
+      const btn = document.getElementById('submitMonthlyPayment');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+      btn.disabled = true;
+      
+      const resp = await callApi('submitMonthlyPayment', {
+        email: currentUser.email,
+        password: password,
+        trxId: trxId
+      });
+      
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+      
+      if (resp.success) {
+        alert('Monthly payment submitted! Waiting for admin approval.');
+        paymentForm.classList.add('hidden');
+        document.getElementById('monthlyTrxId').value = '';
+        document.getElementById('confirmPassword').value = '';
+        
+        // Refresh user data
+        const refreshResp = await callApi('getUser', { email: currentUser.email, password: currentUser.password || password });
+        if (refreshResp.success) {
+          currentUser = refreshResp.user;
+          sessionStorage.setItem('capcup_user', JSON.stringify(currentUser));
+          await updateDashboardUI();
+        }
+      } else {
+        alert(resp.message || 'Payment submission failed');
+      }
+    });
+
+    // Auto-login from session
+    (async function init() {
+      const saved = sessionStorage.getItem('capcup_user');
+      if (saved) {
+        try {
+          currentUser = JSON.parse(saved);
+          const resp = await callApi('getUser', { email: currentUser.email, password: currentUser.password || '' });
+          if (resp.success) {
+            currentUser = resp.user;
+            sessionStorage.setItem('capcup_user', JSON.stringify(currentUser));
+            showDashboard();
+          } else {
+            sessionStorage.removeItem('capcup_user');
+          }
+        } catch (e) {
+          sessionStorage.removeItem('capcup_user');
+        }
+      }
+    })();
+
+    // Enter key support for login
+    document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        loginSubmitBtn.click();
+      }
+    });
+  </script>
+</body>
+  </html>
