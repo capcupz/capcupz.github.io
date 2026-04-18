@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=1.5">
+    <title>CapCup · Premium Virtual Card</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            color: #1e293b;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+        
+        :root {
+            --primary: #1e3a5f;
+            --primary-light: #2a4a6a;
+            --accent: #3b82f6;
+            --accent-light: #60a5fa;
+            --card-dark: #0f172a;
+            --card-darker: #0a0f1f;
+            --gold: #fbbf24;
+            --gold-dark: #d97706;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+        
+        h1, h2, h3 {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            padding: 0.9rem 2rem;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(30, 58, 95, 0.2);
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        }
+        
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent) 0%, #2563eb 100%);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            box-shadow: none;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(30, 58, 95, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            background: white;
+            transition: all 0.3s;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .logo {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.03em;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        
+        .nav-link:hover {
+            color: var(--accent);
+        }
+        
+        /* Premium Card */
+        .card-wrapper {
+            display: flex;
+            justify-content: center;
+            margin: 3rem 0;
+            perspective: 1000px;
+        }
+        
+        .premium-card {
+            width: 100%;
+            max-width: 480px;
+            aspect-ratio: 1.6 / 1;
+            border-radius: 32px;
+            background: linear-gradient(145deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            padding: 1.8rem;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            box-shadow: 
+                0 30px 60px -20px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 215, 0, 0.1) inset,
+                0 0 30px rgba(59, 130, 246, 0.2);
+            animation: floatCard 6s ease-in-out infinite;
+            transform-style: preserve-3d;
+            transition: all 0.3s;
+        }
+        
+        .premium-card.expired-glow {
+            box-shadow: 
+                0 30px 60px -20px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(239, 68, 68, 0.3) inset,
+                0 0 30px rgba(239, 68, 68, 0.2);
+        }
+        
+        .premium-card:hover {
+            box-shadow: 
+                0 40px 80px -20px rgba(0, 0, 0, 0.6),
+                0 0 0 2px rgba(251, 191, 36, 0.2) inset,
+                0 0 40px rgba(59, 130, 246, 0.3);
+        }
+        
+        .card-orbs {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            border-radius: 32px;
+        }
+        
+        .orb {
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: orbFloat 8s ease-in-out infinite alternate;
+        }
+        
+        .orb-1 {
+            background: #3b82f6;
+            top: -50px;
+            left: -50px;
+            animation-delay: 0s;
+        }
+        
+        .orb-2 {
+            background: #8b5cf6;
+            bottom: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            animation-delay: 2s;
+        }
+        
+        .orb-3 {
+            background: #ec4899;
+            top: 50%;
+            left: 50%;
+            width: 180px;
+            height: 180px;
+            opacity: 0.2;
+            animation-delay: 4s;
+        }
+        
+        .holographic-sweep {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                115deg,
+                transparent 0%,
+                transparent 30%,
+                rgba(255, 255, 255, 0.1) 45%,
+                rgba(255, 255, 255, 0.3) 50%,
+                rgba(255, 255, 255, 0.1) 55%,
+                transparent 70%,
+                transparent 100%
+            );
+            animation: holographicSweep 6s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        .shimmer {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(
+                circle at 30% 30%,
+                rgba(255, 255, 255, 0.15) 0%,
+                transparent 60%
+            );
+            mix-blend-mode: overlay;
+            animation: shimmerPulse 3s ease-in-out infinite alternate;
+            pointer-events: none;
+            z-index: 4;
+        }
+        
+        .card-content {
+            position: relative;
+            z-index: 10;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .card-brand {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.02em;
+            text-shadow: 0 0 30px rgba(96, 165, 250, 0.3);
+        }
+        
+        .infinity-badge {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #0f172a;
+            font-weight: 800;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: badgeGlow 2s ease-in-out infinite alternate;
+        }
+        
+        .chip-section {
+            margin-top: 1.5rem;
+        }
+        
+        .gold-chip {
+            width: 55px;
+            height: 45px;
+            background: linear-gradient(145deg, #fbbf24 0%, #d97706 50%, #fbbf24 100%);
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 
+                0 4px 15px rgba(251, 191, 36, 0.4),
+                inset 0 1px 3px rgba(255, 255, 255, 0.5),
+                inset 0 -1px 3px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.5);
+        }
+        
+        .gold-chip::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+            border-radius: 6px;
+        }
+        
+        .gold-chip::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.1) 100%);
+            border-radius: 4px;
+        }
+        
+        .card-number-display {
+            margin-top: 1.2rem;
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: 6px;
+            word-spacing: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            font-family: 'Courier New', monospace;
+        }
+        
+        .card-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        
+        .cardholder-section {
+            text-transform: uppercase;
+        }
+        
+        .cardholder-label {
+            font-size: 0.6rem;
+            opacity: 0.7;
+            letter-spacing: 2px;
+            margin-bottom: 0.2rem;
+        }
+        
+        .cardholder-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+        
+        .due-date-display {
+            text-align: right;
+            font-size: 0.7rem;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+        
+        @keyframes floatCard {
+            0%, 100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
+            50% { transform: translateY(-15px) rotateX(2deg) rotateY(3deg); }
+        }
+        
+        @keyframes orbFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, -30px) scale(1.2); }
+        }
+        
+        @keyframes holographicSweep {
+            0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(25deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(25deg); }
+        }
+        
+        @keyframes shimmerPulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+        
+        @keyframes badgeGlow {
+            0% { box-shadow: 0 0 15px rgba(251, 191, 36, 0.3); }
+            100% { box-shadow: 0 0 25px rgba(251, 191, 36, 0.7); }
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+        
+        .price-badge {
+            background: linear-gradient(135deg, #eef2ff 0%, #ffffff 100%);
+            border-radius: 16px;
+            padding: 1.2rem;
+            border: 2px solid var(--accent);
+            margin: 1.5rem 0;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-active {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .status-expired {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+        
+        .status-pending {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+        
+        .dashboard-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .action-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border-color: var(--accent);
+        }
+        
+        .action-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .action-card.disabled:hover {
+            transform: none;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .expired-notice {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid var(--warning);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        
+        .payment-pending-notice {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        @media (max-width: 640px) {
+            .container { padding: 1rem; }
+            .logo { font-size: 1.8rem; }
+            .premium-card { padding: 1.2rem; }
+            .card-number-display { font-size: 1.3rem; letter-spacing: 3px; }
+            .card-brand { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">CapCup</div>
+        <div class="nav-links">
+            <a class="nav-link" id="loginToggleBtn">Login</a>
+            <a class="nav-link" id="logoutBtn" style="display: none;">Logout</a>
+            <a class="nav-link" href="admin.html">Admin</a>
+        </div>
+    </nav>
+
+    <!-- ========== LANDING / REGISTRATION ========= -->
+    <div id="landingSection">
+        <div style="text-align: center; margin: 2rem 0 3rem;">
+            <h1 style="font-size: 3rem; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 1rem;">
+                Experience the Future<br>of Digital Cards
+            </h1>
+            <p style="font-size: 1.2rem; color: #64748b;">Premium virtual membership with exclusive benefits</p>
+        </div>
+
+        <div class="card-wrapper">
+            <div class="premium-card" id="previewCard">
+                <div class="card-orbs">
+                    <div class="orb orb-1"></div>
+                    <div class="orb orb-2"></div>
+                    <div class="orb orb-3"></div>
+                </div>
+                <div class="holographic-sweep"></div>
+                <div class="shimmer"></div>
+                <div class="card-content">
+                    <div class="card-header">
+                        <span class="card-brand">CapCup</span>
+                        <span class="infinity-badge">✦ INFINITY</span>
+                    </div>
+                    <div class="chip-section">
+                        <div class="gold-chip"></div>
+                    </div>
+                    <div class="card-number-display">6677 •••• ••••</div>
+                    <div class="card-footer">
+                        <div class="cardholder-section">
+                            <div class="cardholder-label">Cardholder</div>
+                            <div class="cardholder-name" id="previewName">CAPCUP MEMBER</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="max-width: 560px; margin: 0 auto;">
+            <div class="info-card">
+                <h2 style="margin-bottom: 1.5rem;">✨ Join CapCup Today</h2>
+                
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" class="input-field" id="regName" placeholder="John Doe">
+                </div>
+                
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" class="input-field" id="regEmail" placeholder="you@example.com">
+                </div>
+                
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" class="input-field" id="regPassword" placeholder="••••••••">
+                </div>
+                
+                <div class="price-badge">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <span style="font-weight: 700; color: var(--primary);">💳 Nagad Payment</span>
+                        <span style="font-weight: 800; font-size: 1.2rem; color: var(--accent);">01715783544</span>
+                    </div>
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <span style="background: var(--primary); color: white; padding: 0.3rem 1rem; border-radius: 50px; font-weight: 600;">৳150 One-time</span>
+                        <span style="background: var(--accent); color: white; padding: 0.3rem 1rem; border-radius: 50px; font-weight: 600;">৳50 Monthly</span>
+                    </div>
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <label>Nagad Transaction ID</label>
+                        <input type="text" class="input-field" id="regTrxId" placeholder="TXN123456789">
+                    </div>
+                </div>
+                
+                <button class="btn btn-accent" style="width: 100%;" id="registerBtn">
+                    Register Now · Pay ৳150
+                </button>
+                
+                <p style="text-align: center; margin-top: 1.5rem; color: #64748b;">
+                    Already have an account? 
+                    <a id="switchToLoginLink" style="color: var(--accent); font-weight: 600; cursor: pointer;">Sign In</a>
+                </p>
+                
+                <p id="regMessage" style="margin-top: 1rem; text-align: center; font-weight: 500;"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== LOGIN / DASHBOARD ========= -->
+    <div id="dashboardSection" class="hidden">
+        <!-- Login Form -->
+        <div id="loginFormArea" style="max-width: 480px; margin: 4rem auto;">
+            <div class="info-card">
+                <h2 style="margin-bottom: 1.5rem;">Welcome Back</h2>
+                
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" class="input-field" id="loginEmail" placeholder="you@example.com">
+                </div>
+                
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" class="input-field" id="loginPassword" placeholder="••••••••">
+                </div>
+                
+                <button class="btn btn-primary" style="width: 100%;" id="loginSubmitBtn">
+                    Sign In to Dashboard
+                </button>
+                
+                <p id="loginMessage" style="margin-top: 1rem; text-align: center;"></p>
+                
+                <p style="text-align: center; margin-top: 1.5rem;">
+                    <a id="backToRegisterLink" style="color: var(--accent); cursor: pointer;">← Back to Registration</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div id="dashboardContent" class="hidden">
+            <!-- User's Premium Card -->
+            <div class="card-wrapper">
+                <div class="premium-card" id="userCard">
+                    <div class="card-orbs">
+                        <div class="orb orb-1"></div>
+                        <div class="orb orb-2"></div>
+                        <div class="orb orb-3"></div>
+                    </div>
+                    <div class="holographic-sweep"></div>
+                    <div class="shimmer"></div>
+                    <div class="card-content">
+                        <div class="card-header">
+                            <span class="card-brand">CapCup</span>
+                            <span class="infinity-badge">✦ INFINITY</span>
+                        </div>
+                        <div class="chip-section">
+                            <div class="gold-chip"></div>
+                        </div>
+                        <div class="card-number-display" id="displayCardNumber">6677 XXXX XXXX</div>
+                        <div class="card-footer">
+                            <div class="cardholder-section">
+                                <div class="cardholder-label">Cardholder</div>
+                                <div class="cardholder-name" id="displayCardholder">CAPCUP MEMBER</div>
+                            </div>
+                        </div>
+                        <div class="due-date-display" id="dueDateDisplay"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Status -->
+            <div style="text-align: center; margin: 2rem 0;">
+                <span id="userStatusBadge" class="status-badge status-active">Active</span>
+            </div>
+
+            <!-- Expired Notice -->
+            <div id="expiredNotice" class="expired-notice hidden">
+                <h3 style="color: #92400e; margin-bottom: 0.5rem;">⚠️ Membership Expired</h3>
+                <p style="color: #92400e; margin-bottom: 1rem;">Your membership has expired. Please pay the monthly fee to reactivate your card and access premium features.</p>
+            </div>
+
+            <!-- Payment Pending Notice -->
+            <div id="paymentPendingNotice" class="payment-pending-notice hidden">
+                <h3 style="color: var(--primary); margin-bottom: 0.5rem;">⏳ Payment Pending Approval</h3>
+                <p style="color: var(--primary);">Your payment has been submitted and is waiting for admin approval. You'll be notified once approved.</p>
+            </div>
+
+            <!-- Dashboard Actions -->
+            <div class="dashboard-actions">
+                <div class="action-card" id="helpCard">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">🎓</div>
+                    <h3>Premium Technical Help</h3>
+                    <p style="color: #64748b; margin-top: 0.5rem;">Get expert assistance for any technical issue</p>
+                </div>
+                
+                <div class="action-card" id="paymentCard">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">💳</div>
+                    <h3>Pay Monthly Fee</h3>
+                    <p style="color: #64748b; margin-top: 0.5rem;">Renew your membership for 30 days</p>
+                </div>
+            </div>
+
+            <!-- Monthly Payment Section -->
+            <div id="monthlyPaySection" class="hidden" style="margin-top: 2rem;">
+                <div class="info-card">
+                    <h3 style="margin-bottom: 1.5rem;">💳 Pay Monthly Fee (৳50)</h3>
+                    <div style="background: #f8fafc; padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem;">
+                        <p style="font-weight: 600; margin-bottom: 0.5rem;">Send ৳50 to Nagad:</p>
+                        <p style="font-size: 1.8rem; font-weight: 700; color: var(--primary);">01715783544</p>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Nagad Transaction ID</label>
+                        <input type="text" class="input-field" id="monthlyTrxId" placeholder="Enter Transaction ID">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Confirm Your Password</label>
+                        <input type="password" class="input-field" id="confirmPassword" placeholder="Enter your password to confirm">
+                    </div>
+                    
+                    <button class="btn btn-accent" id="submitMonthlyBtn">Submit Payment</button>
+                    <button class="btn btn-outline" style="margin-left: 1rem;" id="closeMonthlyPaymentBtn">Cancel</button>
+                    
+                    <p id="payMessage" style="margin-top: 1rem;"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        "use strict";
+        // CONFIGURATION - YOUR DEPLOYED SCRIPT URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzzuLQLT6CW-8DPsUSbw9DiN3fSXCNZHcRBDoGwNKLv3wl-7UE94a6t1sIkgzleT4Fy/exec';
+        const ADMIN_EMAIL = 'tartil.bdlink@gmail.com';
+        
+        let currentUser = null;
+
+        function makeAuthToken(email, password) {
+            return btoa(email + ":" + password);
+        }
+
+        async function apiCall(action, data = {}, authToken = null) {
+            const formData = new FormData();
+            formData.append('action', action);
+            Object.keys(data).forEach(k => formData.append(k, data[k]));
+            
+            const headers = {};
+            if (authToken) headers['Authorization'] = 'Basic ' + authToken;
+            
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: formData, headers });
+                return await res.json();
+            } catch(e) {
+                console.error('API Error:', e);
+                return { success: false, message: 'Network error. Please try again.' };
+            }
+        }
+
+        // DOM Elements
+        const landingSection = document.getElementById('landingSection');
+        const dashboardSection = document.getElementById('dashboardSection');
+        const loginFormArea = document.getElementById('loginFormArea');
+        const dashboardContent = document.getElementById('dashboardContent');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loginToggleBtn = document.getElementById('loginToggleBtn');
+        
+        // Show landing
+        function showLanding() {
+            landingSection.classList.remove('hidden');
+            dashboardSection.classList.add('hidden');
+            loginToggleBtn.style.display = 'inline';
+            logoutBtn.style.display = 'none';
+        }
+        
+        // Show login
+        function showLogin() {
+            landingSection.classList.add('hidden');
+            dashboardSection.classList.remove('hidden');
+            loginFormArea.classList.remove('hidden');
+            dashboardContent.classList.add('hidden');
+            loginToggleBtn.style.display = 'none';
+            logoutBtn.style.display = 'inline';
+        }
+        
+        // Show dashboard after login
+        function showDashboard() {
+            loginFormArea.classList.add('hidden');
+            dashboardContent.classList.remove('hidden');
+        }
+        
+        // Logout
+        function logout() {
+            currentUser = null;
+            sessionStorage.removeItem('capcup_auth');
+            sessionStorage.removeItem('capcup_email');
+            showLanding();
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('expiredNotice').classList.add('hidden');
+            document.getElementById('paymentPendingNotice').classList.add('hidden');
+        }
+
+        // Event Listeners
+        loginToggleBtn.addEventListener('click', showLogin);
+        logoutBtn.addEventListener('click', logout);
+        document.getElementById('switchToLoginLink').addEventListener('click', showLogin);
+        document.getElementById('backToRegisterLink').addEventListener('click', showLanding);
+        
+        // Register
+        document.getElementById('registerBtn').addEventListener('click', async ()=>{
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const trx = document.getElementById('regTrxId').value.trim();
+            
+            if(!name || !email || !password || !trx) {
+                alert('All fields are required');
+                return;
+            }
+            
+            const btn = document.getElementById('registerBtn');
+            btn.disabled = true;
+            btn.innerHTML = 'Processing...';
+            
+            const res = await apiCall('register', { name, email, password, trx });
+            
+            btn.disabled = false;
+            btn.innerHTML = 'Register Now · Pay ৳150';
+            
+            document.getElementById('regMessage').innerText = res.message;
+            document.getElementById('regMessage').style.color = res.success ? '#10b981' : '#ef4444';
+            
+            if(res.success) {
+                setTimeout(() => showLogin(), 2000);
+            }
+        });
+
+        // Login
+        document.getElementById('loginSubmitBtn').addEventListener('click', async ()=>{
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPassword').value;
+            
+            if(!email || !pass) {
+                document.getElementById('loginMessage').innerText = 'Email and password required';
+                return;
+            }
+            
+            const token = makeAuthToken(email, pass);
+            const res = await apiCall('login', {}, token);
+            
+            if(res.success && res.user) {
+                currentUser = res.user;
+                sessionStorage.setItem('capcup_auth', token);
+                sessionStorage.setItem('capcup_email', email);
+                updateDashboardUI();
+                showDashboard();
+            } else {
+                document.getElementById('loginMessage').innerText = res.message || 'Login failed';
+            }
+        });
+
+        // Update Dashboard UI
+        function updateDashboardUI() {
+            if(!currentUser) return;
+            
+            document.getElementById('displayCardholder').innerText = (currentUser.name || 'CAPCUP MEMBER').toUpperCase();
+            document.getElementById('previewName').innerText = (currentUser.name || 'CAPCUP MEMBER').toUpperCase();
+            
+            const cardNum = currentUser.cardNumber || '6677 0000 0000';
+            const masked = cardNum.length >= 4 ? '6677 •••• ' + cardNum.slice(-4) : '6677 •••• ••••';
+            document.getElementById('displayCardNumber').innerText = masked;
+            
+            const badge = document.getElementById('userStatusBadge');
+            const helpCard = document.getElementById('helpCard');
+            const userCard = document.getElementById('userCard');
+            const dueDateDisplay = document.getElementById('dueDateDisplay');
+            const expiredNotice = document.getElementById('expiredNotice');
+            const paymentPendingNotice = document.getElementById('paymentPendingNotice');
+            
+            const today = new Date();
+            const dueDate = currentUser.dueDate ? new Date(currentUser.dueDate) : null;
+            const isApproved = currentUser.approved === true;
+            const isActive = currentUser.active === true;
+            const isExpired = dueDate && dueDate < today;
+            const hasPendingPayment = currentUser.pendingPayment === true;
+            
+            let statusText = 'Active';
+            let statusClass = 'status-active';
+            let canAccessHelp = false;
+            
+            if (!isApproved) {
+                statusText = 'Pending Approval';
+                statusClass = 'status-pending';
+            } else if (hasPendingPayment) {
+                statusText = 'Payment Pending';
+                statusClass = 'status-pending';
+                paymentPendingNotice.classList.remove('hidden');
+            } else if (!isActive || isExpired) {
+                statusText = 'Expired';
+                statusClass = 'status-expired';
+                expiredNotice.classList.remove('hidden');
+                userCard.classList.add('expired-glow');
+            } else {
+                statusText = 'Active';
+                statusClass = 'status-active';
+                canAccessHelp = true;
+                expiredNotice.classList.add('hidden');
+                paymentPendingNotice.classList.add('hidden');
+                userCard.classList.remove('expired-glow');
+            }
+            
+            badge.innerText = statusText;
+            badge.className = 'status-badge ' + statusClass;
+            
+            if (dueDate) {
+                const formattedDate = dueDate.toLocaleDateString('en-GB');
+                dueDateDisplay.innerText = `Due: ${formattedDate} | Months paid: ${currentUser.monthsPaid || 0}`;
+                dueDateDisplay.style.color = isExpired ? '#ef4444' : '#10b981';
+            }
+            
+            if (!canAccessHelp) {
+                helpCard.classList.add('disabled');
+                helpCard.onclick = () => alert('Your membership is not active. Please pay the monthly fee to access premium help.');
+            } else {
+                helpCard.classList.remove('disabled');
+                helpCard.onclick = requestTechHelp;
+            }
+            
+            document.getElementById('paymentCard').classList.remove('disabled');
+        }
+
+        function requestTechHelp() {
+            if(!currentUser) return;
+            const isActive = currentUser.active === true;
+            if (!isActive) { alert('Your membership is not active.'); return; }
+            window.open(`mailto:${ADMIN_EMAIL}?subject=CapCup%20Support%20Request&body=Name:%20${encodeURIComponent(currentUser.name)}`, '_blank');
+        }
+
+        // Payment card click
+        document.getElementById('paymentCard').addEventListener('click', ()=>{
+            document.getElementById('monthlyPaySection').classList.remove('hidden');
+        });
+        
+        document.getElementById('closeMonthlyPaymentBtn').addEventListener('click', ()=>{
+            document.getElementById('monthlyPaySection').classList.add('hidden');
+            document.getElementById('confirmPassword').value = '';
+            document.getElementById('monthlyTrxId').value = '';
+        });
+
+        // Submit monthly payment
+        document.getElementById('submitMonthlyBtn').addEventListener('click', async ()=>{
+            const trx = document.getElementById('monthlyTrxId').value.trim();
+            const passConfirm = document.getElementById('confirmPassword').value;
+            
+            if(!trx || !passConfirm) {
+                alert('Transaction ID and password are required');
+                return;
+            }
+            
+            const token = sessionStorage.getItem('capcup_auth');
+            const res = await apiCall('submitMonthly', { trx, passwordConfirm: passConfirm }, token);
+            
+            document.getElementById('payMessage').innerText = res.message;
+            document.getElementById('payMessage').style.color = res.success ? '#10b981' : '#ef4444';
+            
+            if(res.success) {
+                setTimeout(async () => {
+                    document.getElementById('monthlyPaySection').classList.add('hidden');
+                    document.getElementById('confirmPassword').value = '';
+                    document.getElementById('monthlyTrxId').value = '';
+                    
+                    const email = sessionStorage.getItem('capcup_email');
+                    const userRes = await apiCall('getUser', { email }, token);
+                    if(userRes.success) {
+                        currentUser = userRes.user;
+                        updateDashboardUI();
+                    }
+                }, 2000);
+            }
+        });
+
+        // Auto-restore session
+        window.addEventListener('load', async ()=>{
+            const token = sessionStorage.getItem('capcup_auth');
+            const email = sessionStorage.getItem('capcup_email');
+            if(token && email) {
+                const res = await apiCall('getUser', { email }, token);
+                if(res.success) {
+                    currentUser = res.user;
+                    landingSection.classList.add('hidden');
+                    dashboardSection.classList.remove('hidden');
+                    loginFormArea.classList.add('hidden');
+                    dashboardContent.classList.remove('hidden');
+                    loginToggleBtn.style.display = 'none';
+                    logoutBtn.style.display = 'inline';
+                    updateDashboardUI();
+                } else {
+                    sessionStorage.clear();
+                }
+            }
+        });
+
+        showLanding();
+    })();
+</script>
+</body>
+  </html>
